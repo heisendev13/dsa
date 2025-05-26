@@ -27,22 +27,25 @@ Output: 6 (subarray [4, -1, 2, 1])
 ## ✅ Algorithm Steps
 
 1. Initialize:
-   - `max_so_far = arr[0]` (global maximum)
-   - `max_ending_here = arr[0]` (maximum ending at current position)
+   - `currSum = nums[0]` (current running sum)
+   - `maxSum = nums[0]` (best sum found so far)
 
 2. For each element from index 1 to n-1:
-   - `max_ending_here = max(arr[i], max_ending_here + arr[i])`
-   - `max_so_far = max(max_so_far, max_ending_here)`
+   - If `currSum < 0`: Reset `currSum = nums[i]`
+   - Else: Extend `currSum += nums[i]`
+   - Update `maxSum = max(maxSum, currSum)`
 
-3. Return `max_so_far`
+3. Return `maxSum`
 
 ---
 
 ## 💡 Intuition
 
-- **Extend vs Start Fresh:** If adding current element to existing subarray gives less than starting fresh, start new subarray
-- **Negative Prefix:** If current sum becomes negative, it won't help future elements, so reset
-- **Track Global Max:** Always remember the best sum seen so far
+- **Reset on Negative:** If `currSum < 0`, it will only drag down future elements, so start fresh with current element
+- **Accumulate Positive:** If `currSum ≥ 0`, it helps boost the next elements, so keep adding
+- **Track Best:** Always remember the maximum sum encountered so far
+
+**Core Logic:** A negative running sum is useless - discard it and restart from current position.
 
 ---
 
@@ -93,9 +96,9 @@ Array: `[-2, 1, -3, 4, -1, 2, 1, -5, 4]`
 | i | nums[i] | currSum | maxSum | Decision |
 |---|---------|---------|--------|----------|
 | 0 | -2      | -2      | -2     | Initialize |
-| 1 | 1       | 1       | 1      | Start fresh (currSum < 0) |
+| 1 | 1       | 1       | 1      | Reset (currSum < 0) |
 | 2 | -3      | -2      | 1      | Extend (1 + (-3)) |
-| 3 | 4       | 4       | 4      | Start fresh (currSum < 0) |
+| 3 | 4       | 4       | 4      | Reset (currSum < 0) |
 | 4 | -1      | 3       | 4      | Extend (4 + (-1)) |
 | 5 | 2       | 5       | 5      | Extend (3 + 2) |
 | 6 | 1       | 6       | 6      | Extend (5 + 1) |
