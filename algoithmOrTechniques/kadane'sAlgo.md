@@ -1,57 +1,138 @@
 # Kadane's Algorithm – Maximum Subarray Sum
 
-This repository contains my implementation and understanding of **Kadane's Algorithm**, a powerful dynamic programming technique used to find the **maximum sum of a contiguous subarray** within a one-dimensional array of numbers.
+My implementation and understanding of **Kadane's Algorithm**, a dynamic programming technique to find the **maximum sum of a contiguous subarray** in O(n) time.
 
 ---
 
 ## 📌 What is Kadane's Algorithm?
 
-Kadane’s Algorithm is used to solve the **Maximum Subarray Problem** with a linear time complexity of **O(n)**. It iteratively computes the maximum subarray sum ending at each position and keeps track of the global maximum.
+Solves the **Maximum Subarray Problem** by iteratively computing the maximum subarray sum ending at each position while tracking the global maximum.
+
+**Key Insight:** At each element, decide whether to extend the current subarray or start fresh.
 
 ---
 
 ## 📚 Problem Statement
 
-> Given an array `arr[]` of integers, find the **contiguous subarray** (containing at least one number) which has the largest sum and return its sum.
+> Given an array `arr[]` of integers, find the **contiguous subarray** with the largest sum and return its sum.
+
+**Example:**
+```
+Input: [-2, 1, -3, 4, -1, 2, 1, -5, 4]
+Output: 6 (subarray [4, -1, 2, 1])
+```
 
 ---
 
-## ✅ Approach – Kadane's Algorithm
+## ✅ Algorithm Steps
 
-- Initialize two variables:
-  - `max_so_far = arr[0]`
-  - `max_ending_here = arr[0]`
-- Loop from index 1 to n-1:
-  - Update `max_ending_here = max(arr[i], max_ending_here + arr[i])`
-  - Update `max_so_far = max(max_so_far, max_ending_here)`
-- Return `max_so_far`
+1. Initialize:
+   - `max_so_far = arr[0]` (global maximum)
+   - `max_ending_here = arr[0]` (maximum ending at current position)
+
+2. For each element from index 1 to n-1:
+   - `max_ending_here = max(arr[i], max_ending_here + arr[i])`
+   - `max_so_far = max(max_so_far, max_ending_here)`
+
+3. Return `max_so_far`
 
 ---
 
 ## 💡 Intuition
 
-- At each step, decide whether to **extend the previous subarray** or **start a new subarray** with the current element.
-- If the current element is greater than the current subarray sum + current element, we start fresh from here.
+- **Extend vs Start Fresh:** If adding current element to existing subarray gives less than starting fresh, start new subarray
+- **Negative Prefix:** If current sum becomes negative, it won't help future elements, so reset
+- **Track Global Max:** Always remember the best sum seen so far
 
 ---
 
-## 🧠 Pseudocode
+## 🚀 Implementation
 
-```plaintext
+### Java Solution
+```java
 class Solution {
     public int maxSubArray(int[] nums) {
-        int currsum=nums[0];
-        int maxsum=nums[0];
-        for(int i=1;i<nums.length;i++){
-            if(currsum<0){
-                currsum=nums[i];
+        int currSum = nums[0];
+        int maxSum = nums[0];
+        
+        for (int i = 1; i < nums.length; i++) {
+            // Start fresh if current sum is negative
+            if (currSum < 0) {
+                currSum = nums[i];
+            } else {
+                currSum += nums[i];
             }
-            else{
-                currsum+=nums[i];
-               
-            }
-            maxsum=Math.max(maxsum,currsum);
+            // Update global maximum
+            maxSum = Math.max(maxSum, currSum);
         }
-        return maxsum;
+        return maxSum;
     }
 }
+```
+
+### Alternative Approach
+```java
+public int maxSubArray(int[] nums) {
+    int maxSoFar = nums[0];
+    int maxEndingHere = nums[0];
+    
+    for (int i = 1; i < nums.length; i++) {
+        maxEndingHere = Math.max(nums[i], maxEndingHere + nums[i]);
+        maxSoFar = Math.max(maxSoFar, maxEndingHere);
+    }
+    return maxSoFar;
+}
+```
+
+---
+
+## 🧪 Trace Example
+
+Array: `[-2, 1, -3, 4, -1, 2, 1, -5, 4]`
+
+| i | nums[i] | currSum | maxSum | Decision |
+|---|---------|---------|--------|----------|
+| 0 | -2      | -2      | -2     | Initialize |
+| 1 | 1       | 1       | 1      | Start fresh (currSum < 0) |
+| 2 | -3      | -2      | 1      | Extend (1 + (-3)) |
+| 3 | 4       | 4       | 4      | Start fresh (currSum < 0) |
+| 4 | -1      | 3       | 4      | Extend (4 + (-1)) |
+| 5 | 2       | 5       | 5      | Extend (3 + 2) |
+| 6 | 1       | 6       | 6      | Extend (5 + 1) |
+| 7 | -5      | 1       | 6      | Extend (6 + (-5)) |
+| 8 | 4       | 5       | 6      | Extend (1 + 4) |
+
+**Result:** 6
+
+---
+
+## ⚡ Complexity Analysis
+
+- **Time:** O(n) - Single pass through array
+- **Space:** O(1) - Only two variables needed
+
+---
+
+## 🎯 Key Takeaways
+
+1. **Dynamic Programming:** Build solution using previous results
+2. **Greedy Choice:** At each step, make locally optimal decision
+3. **State Transition:** `maxEndingHere` represents subproblem solution
+4. **Edge Cases:** Handle single element and all-negative arrays
+
+---
+
+## 🔄 Variations to Practice
+
+- **Find actual subarray indices** (not just sum)
+- **2D version** (maximum sum rectangle)
+- **Circular array** version
+- **At least K elements** constraint
+
+---
+
+## 📝 Common Mistakes to Avoid
+
+- Forgetting to handle negative numbers correctly
+- Not initializing variables with first element
+- Confusing local vs global maximum tracking
